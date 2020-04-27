@@ -9,7 +9,7 @@ from boss import Boss
 import random
 
 running = True
-
+Game_Clock = pygame.time.Clock()
 # Define constants for the screen width and height
 SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
@@ -42,8 +42,23 @@ player = Player(SCREEN_HEIGHT, SCREEN_WIDTH)  #Create the Player
 enemies = pygame.sprite.Group() # enemies is used for collision detection and position updates
 clouds = pygame.sprite.Group() # clouds is used for collision detection and position updates
 bosses = pygame.sprite.Group()
+
 all_sprites = pygame.sprite.Group()  # all_sprites is used for rendering
 all_sprites.add(player)
+Last_Update_Time = pygame.time.get_ticks()
+
+
+def show_score():
+    global Last_Update_Time
+    if (IS_GAME_OVER == False):
+        time_in_secs = pygame.time.get_ticks() / 1000
+    else:
+        time_in_secs = Last_Update_Time
+    score = pygame.font.Font('freesansbold.ttf', 20)
+    #if(pygame.time.get_ticks() - Last_Update_Time)/1000 > 1:
+    img = score.render(f"Time: {int(time_in_secs)} | Health: {3 - player.hit_points}", True, (255, 255, 255))
+    screen.blit(img, (50, 10))
+    Last_Update_Time = time_in_secs
 
 #Main Loop
 while running:
@@ -75,6 +90,7 @@ while running:
     enemies.update()
     bosses.update()
     screen.fill((0, 0, 0))  # Fill the screen with black
+    show_score()
 
     # Draw all sprites
     for entity in all_sprites:
