@@ -4,11 +4,14 @@ from pygame import display
 from pygame import surface
 from player import Player
 from enemy import Enemy
+from cloud import Cloud
+import random
+
 running = True
 
 # Define constants for the screen width and height
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1024
+SCREEN_HEIGHT = 768
 
 # Create the screen object
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
@@ -19,8 +22,11 @@ surf.fill((0,0,0))
 rect = surf.get_rect()
 
 # Create a custom event for adding a new enemy
-ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, 500) #Add a new enemy ever 250 milliseconds
+EVENT_ADD_ENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(EVENT_ADD_ENEMY, 500)  # Add a new enemy ever 250 milliseconds
+EVENT_ADD_HEALING_CLOUD = pygame.USEREVENT + 2
+pygame.time.set_timer(EVENT_ADD_HEALING_CLOUD, random.randint(250, 5000))  # Add a new Healing Cloud
+IS_GAME_OVER = False
 
 # Initialize pygame
 pygame.init()
@@ -28,6 +34,7 @@ pygame.init()
 player = Player(SCREEN_HEIGHT, SCREEN_WIDTH)  #Create the Player
 # Create groups to hold enemy sprites and all sprites
 enemies = pygame.sprite.Group() # enemies is used for collision detection and position updates
+clouds = pygame.sprite.Group() # clouds is used for collision detection and position updates
 all_sprites = pygame.sprite.Group()  # all_sprites is used for rendering
 all_sprites.add(player)
 
@@ -39,15 +46,22 @@ while running:
                 running = False
         elif event.type == pygame.QUIT:  # Did user hit quit
             running = False
-        elif event.type == ADDENEMY:  # Add a new enemy?
-            new_enemy = Enemy(SCREEN_HEIGHT, SCREEN_WIDTH)  # Create the new enemy and add it to sprite groups
-            enemies.add(new_enemy)
-            all_sprites.add(new_enemy)
+        elif event.type == EVENT_ADD_HEALING_CLOUD:
+             if (IS_GAME_OVER == False):
+                 new_cloud = Cloud(SCREEN_HEIGHT, SCREEN_WIDTH)
+                 clouds.add(new_cloud)
+                 all_sprites.add(new_cloud)
+        elif event.type == EVENT_ADD_ENEMY:  # Add a new enemy?
+            if(IS_GAME_OVER == False): # Only add new enemies if the Game is still in play (Player not Dead)
+                new_enemy = Enemy(SCREEN_HEIGHT, SCREEN_WIDTH)  # Create the new enemy and add it to sprite groups
+                enemies.add(new_enemy)
+                all_sprites.add(new_enemy)
 
     player.update(pygame.key.get_pressed())
+    clouds.update()
     enemies.update()
     screen.fill((0, 0, 0))  # Fill the screen with black
-    #screen.blit(player.surf, player.rect)  # Draw the player on the screen
+
     # Draw all sprites
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
@@ -55,6 +69,12 @@ while running:
     #Using SpriteCollide instead of SprinteCollideAny, so that we can delete the enemy that collided with us automatically
     if pygame.sprite.spritecollide(player, enemies, True):  # Check if any enemies have collided with the player
         if (player.hit()):
-            player.kill()  # If so, then remove the player and stop the loop
-            running = False
+            IS_GAME_OVER = True
+            #player.kill()  # If so, then remove the player and stop the loop
+            for e in enemies:
+                e.kill()
+            #running = False
+    if pygame.sprite.spritecollide(player, clouds, True):
+        player.heal() #Heal player if he hits a healing cloud!
+
     pygame.display.flip()

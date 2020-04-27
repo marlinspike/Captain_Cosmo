@@ -35,6 +35,13 @@ class Player(pygame.sprite.Sprite):
             img = "./img/fly_2.png"
         self.surf = pygame.image.load(img).convert()
 
+    #Player hit a healing cloud -- deliver a healing point!
+    def heal(self):
+        self.hit_points -= 1
+        if self.hit_points < 0:
+            self.hit_points = 0
+        self.switch_player_image()
+    
     #Hit actions
     #Return: TRUE if player is Dead; FALSE otherwise
     def hit(self) -> bool:
