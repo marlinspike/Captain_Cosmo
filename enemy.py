@@ -4,6 +4,7 @@ import random
 # Define the enemy object by extending pygame.sprite.Sprite
 # The surface you draw on the screen is now an attribute of 'enemy'
 class Enemy(pygame.sprite.Sprite):
+    DAMAGE_CAUSED = 1
     def __init__(self, screen_height, screen_width):
         super(Enemy, self).__init__()
         self.surf = pygame.image.load("./img/bullet.png").convert()
@@ -19,7 +20,7 @@ class Enemy(pygame.sprite.Sprite):
                 random.randint(0, self.SCREEN_HEIGHT),
             )
         )
-        self.speed = random.randint(7, 12)
+        self.speed = random.randint(5, 8)
 
     # Move the sprite based on speed
     # Remove the sprite when it passes the left edge of the screen

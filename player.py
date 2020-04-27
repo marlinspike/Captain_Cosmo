@@ -50,13 +50,20 @@ class Player(pygame.sprite.Sprite):
             self.hit_points = 0
         self.switch_player_image()
     
+    #Is this player Alive
+    def is_player_dead(self) -> bool:
+        if self.hit_points > self.MAX_HIT_POINTS:
+            return True  # Player is dead
+        else:
+            return False
+        
     #Hit actions
     #Return: TRUE if player is Dead; FALSE otherwise
-    def hit(self) -> bool:
+    def hit(self, damage_caused) -> bool:
         bullet_sound = pygame.mixer.Sound('./wav/explosion.wav')
         bullet_sound.play()
         self.speed = self.SPEED_DAMAGED
-        self.hit_points += 1
+        self.hit_points += damage_caused #1
         if self.hit_points > self.MAX_HIT_POINTS:
             return True # Player is dead
         else:
