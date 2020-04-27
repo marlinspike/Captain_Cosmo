@@ -15,6 +15,8 @@ from pygame.locals import (
 
 class Player(pygame.sprite.Sprite):
     MAX_HIT_POINTS = 2
+    SPEED_REGULAR = 5
+    SPEED_DAMAGED = 3
     def __init__(self, screen_height, screen_width):
         super(Player, self).__init__()
         self.surf = pygame.image.load("./img/fly_1.png").convert()
@@ -26,6 +28,7 @@ class Player(pygame.sprite.Sprite):
         #self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect()
         self.switch_player_image()
+        self.speed = self.SPEED_REGULAR
 
     def switch_player_image(self):
         img = "./img/fly_0.png"
@@ -37,6 +40,11 @@ class Player(pygame.sprite.Sprite):
 
     #Player hit a healing cloud -- deliver a healing point!
     def heal(self):
+        if self.hit_points < 2:
+            health_up = pygame.mixer.Sound('./wav/health_up.wav')
+            health_up.play()
+        elif self.hit_points == 2:
+            self.speed = self.SPEED_REGULAR
         self.hit_points -= 1
         if self.hit_points < 0:
             self.hit_points = 0
@@ -45,6 +53,9 @@ class Player(pygame.sprite.Sprite):
     #Hit actions
     #Return: TRUE if player is Dead; FALSE otherwise
     def hit(self) -> bool:
+        bullet_sound = pygame.mixer.Sound('./wav/explosion.wav')
+        bullet_sound.play()
+        self.speed = self.SPEED_DAMAGED
         self.hit_points += 1
         if self.hit_points > self.MAX_HIT_POINTS:
             return True # Player is dead
@@ -55,13 +66,13 @@ class Player(pygame.sprite.Sprite):
     # Move the sprite based on user keypresses
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -5)
+            self.rect.move_ip(0, -1 * self.speed) #-5
         if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 5)
+            self.rect.move_ip(0, self.speed)
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-5, 0)
+            self.rect.move_ip(-1 * self.speed, 0)
         if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(5, 0)
+            self.rect.move_ip(self.speed, 0)
 
     # Keep player on the screen
         if self.rect.left < 0:

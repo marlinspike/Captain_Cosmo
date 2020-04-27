@@ -23,13 +23,15 @@ rect = surf.get_rect()
 
 # Create a custom event for adding a new enemy
 EVENT_ADD_ENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(EVENT_ADD_ENEMY, 500)  # Add a new enemy ever 250 milliseconds
+pygame.time.set_timer(EVENT_ADD_ENEMY, 200)  # Add a new enemy ever 250 milliseconds
 EVENT_ADD_HEALING_CLOUD = pygame.USEREVENT + 2
 pygame.time.set_timer(EVENT_ADD_HEALING_CLOUD, random.randint(250, 5000))  # Add a new Healing Cloud
 IS_GAME_OVER = False
 
 # Initialize pygame
 pygame.init()
+pygame.mixer.music.load("./wav/bgmusic.wav")
+pygame.mixer.music.play(-1)
 
 player = Player(SCREEN_HEIGHT, SCREEN_WIDTH)  #Create the Player
 # Create groups to hold enemy sprites and all sprites
