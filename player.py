@@ -32,9 +32,9 @@ class Player(pygame.sprite.Sprite):
 
     def switch_player_image(self):
         img = "./img/fly_0.png"
-        if (self.hit_points == 1):
+        if (self.health <= 2):
             img = "./img/fly_1.png"
-        if (self.hit_points == 2):
+        if (self.hit_points > 2):
             img = "./img/fly_2.png"
         self.surf = pygame.image.load(img).convert()
 

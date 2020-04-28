@@ -24,14 +24,10 @@ surf.fill((0,0,0))
 rect = surf.get_rect()
 
 # Create a custom event for adding a new enemy
-EVENT_ADD_ENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(EVENT_ADD_ENEMY, 200)  # Add a new enemy ever 200 milliseconds
-EVENT_ADD_HEALING_CLOUD = pygame.USEREVENT + 2
-pygame.time.set_timer(EVENT_ADD_HEALING_CLOUD, random.randint(250, 5000))  # Add a new Healing Cloud
-EVENT_ADD_BOSS = pygame.USEREVENT + 3
-pygame.time.set_timer(EVENT_ADD_BOSS, random.randint(250, 5000))  # Add a new Boss
-EVENT_ADD_FORCEFIELD = pygame.USEREVENT + 4
-pygame.time.set_timer(EVENT_ADD_FORCEFIELD, random.randint(7000, 15000))  # Add a new Forcefield
+EVENT_ADD_ENEMY = pygame.USEREVENT + 1; pygame.time.set_timer(EVENT_ADD_ENEMY, 200)  # Add a new enemy ever 200 milliseconds
+EVENT_ADD_HEALING_CLOUD = pygame.USEREVENT + 2; pygame.time.set_timer(EVENT_ADD_HEALING_CLOUD, random.randint(250, 5000))  # Add a new Healing Cloud
+EVENT_ADD_BOSS = pygame.USEREVENT + 3;  pygame.time.set_timer(EVENT_ADD_BOSS, random.randint(250, 5000))  # Add a new Boss
+EVENT_ADD_FORCEFIELD = pygame.USEREVENT + 4;  pygame.time.set_timer(EVENT_ADD_FORCEFIELD, random.randint(7000, 15000))  # Add a new Forcefield
 IS_GAME_OVER = False
 
 # Initialize pygame
@@ -46,7 +42,7 @@ clouds = pygame.sprite.Group() # clouds is used for collision detection and posi
 bosses = pygame.sprite.Group()
 forcefields = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()  # all_sprites is used for rendering
-all_sprites.add(player)
+all_sprites.add(player); all_sprites.add(enemies); all_sprites.add(clouds); all_sprites.add(bosses); all_sprites.add(forcefields)
 Last_Update_Time = pygame.time.get_ticks()
 
 
@@ -118,7 +114,7 @@ while running:
     if (player.is_player_dead()):
         IS_GAME_OVER = True
         #player.kill()  # If so, then remove the player and stop the loop
-        for e in enemies:
+        for e in all_sprites:
             e.kill()
         #running = False
 
