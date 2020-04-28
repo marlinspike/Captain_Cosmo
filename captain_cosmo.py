@@ -6,6 +6,7 @@ from player import Player
 from enemy import Enemy
 from cloud import Cloud
 from boss import Boss
+from forcefield import Forcefield
 import random
 
 running = True
@@ -29,7 +30,8 @@ EVENT_ADD_HEALING_CLOUD = pygame.USEREVENT + 2
 pygame.time.set_timer(EVENT_ADD_HEALING_CLOUD, random.randint(250, 5000))  # Add a new Healing Cloud
 EVENT_ADD_BOSS = pygame.USEREVENT + 3
 pygame.time.set_timer(EVENT_ADD_BOSS, random.randint(250, 5000))  # Add a new Boss
-
+EVENT_ADD_FORCEFIELD = pygame.USEREVENT + 4
+pygame.time.set_timer(EVENT_ADD_FORCEFIELD, random.randint(7000, 15000))  # Add a new Forcefield
 IS_GAME_OVER = False
 
 # Initialize pygame
@@ -42,7 +44,7 @@ player = Player(SCREEN_HEIGHT, SCREEN_WIDTH)  #Create the Player
 enemies = pygame.sprite.Group() # enemies is used for collision detection and position updates
 clouds = pygame.sprite.Group() # clouds is used for collision detection and position updates
 bosses = pygame.sprite.Group()
-
+forcefields = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()  # all_sprites is used for rendering
 all_sprites.add(player)
 Last_Update_Time = pygame.time.get_ticks()
@@ -56,7 +58,7 @@ def show_score():
         time_in_secs = Last_Update_Time
     score = pygame.font.Font('freesansbold.ttf', 20)
     #if(pygame.time.get_ticks() - Last_Update_Time)/1000 > 1:
-    img = score.render(f"Time: {int(time_in_secs)} | Health: {3 - player.hit_points}", True, (255, 255, 255))
+    img = score.render(f"Time: {int(time_in_secs)} | Health: {player.get_health()}", True, (255, 255, 255))
     screen.blit(img, (50, 10))
     Last_Update_Time = time_in_secs
 
@@ -84,11 +86,17 @@ while running:
                 new_enemy = Enemy(SCREEN_HEIGHT, SCREEN_WIDTH)  # Create the new enemy and add it to sprite groups
                 enemies.add(new_enemy)
                 all_sprites.add(new_enemy)
+        elif event.type == EVENT_ADD_FORCEFIELD:
+            if (IS_GAME_OVER == False):
+                new_ff = Forcefield(SCREEN_HEIGHT, SCREEN_WIDTH)
+                forcefields.add(new_ff)
+                all_sprites.add(new_ff)
 
     player.update(pygame.key.get_pressed())
     clouds.update()
     enemies.update()
     bosses.update()
+    forcefields.update()
     screen.fill((0, 0, 0))  # Fill the screen with black
     show_score()
 
@@ -103,7 +111,9 @@ while running:
     if pygame.sprite.spritecollide(player, bosses, True):
         player.hit(Boss.DAMAGE_CAUSED)
     if pygame.sprite.spritecollide(player, clouds, True):
-        player.heal() #Heal player if he hits a healing cloud!
+        player.heal()  #Heal player if he hits a healing cloud!
+    if pygame.sprite.spritecollide(player, forcefields, True):
+        player.get_forcefield(Forcefield.POWER_UP) # Heal player if he hits a healing cloud!
 
     if (player.is_player_dead()):
         IS_GAME_OVER = True

@@ -14,7 +14,6 @@ from pygame.locals import (
 )
 
 class Player(pygame.sprite.Sprite):
-    MAX_HIT_POINTS = 2
     SPEED_REGULAR = 5
     SPEED_DAMAGED = 3
     def __init__(self, screen_height, screen_width):
@@ -24,6 +23,7 @@ class Player(pygame.sprite.Sprite):
         self.SCREEN_HEIGHT = screen_height
         self.SCREEN_WIDTH = screen_width
         self.hit_points = 0
+        self.health = 3
         #self.surf = pygame.Surface((75, 25))
         #self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect()
@@ -38,22 +38,31 @@ class Player(pygame.sprite.Sprite):
             img = "./img/fly_2.png"
         self.surf = pygame.image.load(img).convert()
 
+    def get_health(self)->int:
+        return self.health
         
     #Player hit a healing cloud -- deliver a healing point!
     def heal(self):
-        if self.hit_points < 2:
-            health_up = pygame.mixer.Sound('./wav/health_up.wav')
-            health_up.play()
-        elif self.hit_points == 2:
-            self.speed = self.SPEED_REGULAR
-        self.hit_points -= 1
-        if self.hit_points < 0:
-            self.hit_points = 0
-        self.switch_player_image()
+        if self.health <= 10:
+            if self.health < 2:
+                self.health += 2
+                health_up = pygame.mixer.Sound('./wav/health_up.wav')
+                health_up.play()
+            elif self.health == 2:
+                self.speed = self.SPEED_REGULAR
+            #self.hit_points -= 1
+            self.switch_player_image()
+    
+    def get_forcefield(self, power_up_bonus: int):
+        self.health += power_up_bonus
+        if (self.health > 10): #Max of 10 Health Points
+            self.health = 10
+        health_up = pygame.mixer.Sound('./wav/health_up.wav')
+        health_up.play()
     
     #Is this player Alive
     def is_player_dead(self) -> bool:
-        if self.hit_points > self.MAX_HIT_POINTS:
+        if self.health < 1:
             return True  # Player is dead
         else:
             return False
@@ -64,8 +73,8 @@ class Player(pygame.sprite.Sprite):
         bullet_sound = pygame.mixer.Sound('./wav/explosion.wav')
         bullet_sound.play()
         self.speed = self.SPEED_DAMAGED
-        self.hit_points += damage_caused #1
-        if self.hit_points > self.MAX_HIT_POINTS:
+        self.health -= damage_caused #1
+        if self.health < 1:
             return True # Player is dead
         else:
             self.switch_player_image()
