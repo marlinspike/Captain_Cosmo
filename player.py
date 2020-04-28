@@ -43,7 +43,7 @@ class Player(pygame.sprite.Sprite):
         
     #Player hit a healing cloud -- deliver a healing point!
     def heal(self):
-        if self.health <= 10:
+        if self.health <= 8:
             if self.health < 2:
                 self.health += 2
                 health_up = pygame.mixer.Sound('./wav/health_up.wav')
