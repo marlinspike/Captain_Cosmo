@@ -18,6 +18,7 @@ SCREEN_HEIGHT = 768
 # Create the screen object
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Captain Cosmo")
 screen.fill((0, 0, 0))
 surf = pygame.Surface((50, 50))
 surf.fill((0,0,0))
@@ -44,7 +45,6 @@ forcefields = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()  # all_sprites is used for rendering
 all_sprites.add(player); all_sprites.add(enemies); all_sprites.add(clouds); all_sprites.add(bosses); all_sprites.add(forcefields)
 Last_Update_Time = pygame.time.get_ticks()
-
 
 def show_score():
     global Last_Update_Time
@@ -116,6 +116,6 @@ while running:
         #player.kill()  # If so, then remove the player and stop the loop
         for e in all_sprites:
             e.kill()
-        #running = False
+            #running = False #End game 
 
     pygame.display.flip()
